@@ -74,6 +74,14 @@
 (defun org-chef-xiachufang-extract-servings (dom)
   "")
 
+(defun org-chef-xiachufang-extract-tips (dom)
+  "Get the tips for a recipe from a xiachufang DOM."
+  (mapcar #'(lambda (n)
+              (replace-regexp-in-string
+               "[0-9]+\..?" ""
+               (replace-regexp-in-string "\n" " " (org-chef-xiachufang-sanitize n))))
+          (remove-if-not #'stringp (dom-children (car (dom-by-class dom "^tip$"))))))
+
 
 (defun org-chef-xiachufang-from-dom (dom)
   "Given a xiachufang.com DOM, retrieve the recipe information.
@@ -93,7 +101,8 @@ This returns an alist with the following keys:
     (prep-time . ,(org-chef-xiachufang-extract-prep-time dom))
     (cook-time . ,(org-chef-xiachufang-extract-cook-time dom))
     (ready-in . nil)
-    (directions . ,(org-chef-xiachufang-extract-directions dom))))
+    (directions . ,(org-chef-xiachufang-extract-directions dom))
+    (tips . ,(org-chef-xiachufang-extract-tips dom))))
 
 
 (defun org-chef-xiachufang-fetch (url)
